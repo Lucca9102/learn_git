@@ -1,8 +1,75 @@
 *本文为[廖雪峰老师网站Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的学习笔记*
+
+# [Git简介](https://www.liaoxuefeng.com/wiki/896043488029600/896067008724000)
+> **世界上最先进的分布式版本控制系统**
+
+---
+## [Git的诞生](https://www.liaoxuefeng.com/wiki/896043488029600/896202815778784)
+***Linus***用两个礼拜，就用C写出了Git。
+
+---
+## [集中式 VS 分布式](https://www.liaoxuefeng.com/wiki/896043488029600/896202780297248)
+- 集中式
+  例如 ***CVS*** 和 ***SVN*** 。集中式版本控制系统把版本库集中存放在中央服务器。很依赖网络。
+- 分布式
+  每个人都有自己的版本库。中央服务器只是为了方便交换而存在，没有网络并不会严重影响工作。
+
+---
+## [安装Git](https://www.liaoxuefeng.com/wiki/896043488029600/896067074338496)
+**略略略**
+
+---
+## [创建版本库](https://www.liaoxuefeng.com/wiki/896043488029600/896827951938304)
+### 一. 创建
+**我**用Git Bash比较顺手，所以下面的介绍都是**Git Bash**的  
+流程：
+1. 首先选一个喜欢的目录，比如`C:/user/yourname/learngit`之类的。尽量不要在路径中出现中文，避免出现不必要的麻烦。  
+2. 打开Git Bash，切换工作路径到选好的位置，有两种方法:  
+   1. 在文件资源管理器中打开选好的文件夹，在里面点击右键，菜单里出现一个`Git Bash Here`，选他，工作路径就自动在选好的位置了。
+   2. 打开`Git Bash`，使用`cd C:/user/yourname/learngit`命令即可。（如果用Git CMD的话，切换到不同盘符下的路径需要用`cd /D path`，固定搭配，具体操作可以查一下表。
+
+    不放心的话可以用`pwd`(***<font color=red>P</font>rint <font color=red>W</font>orking <font color=red>D</font>irectory***)命令查看当前的目录。
+3. 输入`git init`命令，仓库就创建好了。用`ls -ah`命令查看，可以发现目录下多出了一个`.git`文件夹，这个文件夹就是跟踪管理版本库的。不要乱动这个文件夹里的东西，否则可能会破坏版本库。  
+
+*选定的目录不需要是空的，但是不建议初学时使用有重要文件的文件夹，否则后果自负*
+
+### 二. 向版本库添加文件
+*版本控制系统只能跟踪文本文件的改动，比如txt文件和代码等。而对于二进制文件，如图片、视频甚至word文件等，系统只能知道有改动，不能确定改动的内容。*  
+1. 在上述创建的**Git仓库所在目录**下添加文件
+2. 使用命令`git add [file]`，把文件添加到<font color=pinkblue>暂存区</font>(关于暂存区的概念会在后面提到，不理解可以先向后翻看)
+3. 使用命令`git commit -m ["descriptive message"]`把文件提交到仓库，此次提交的说明就是`-m`后面的字符串
+
+有两点提示：  
+1. 如果向工作区添加了新文件，则在`commit`前必须`add`，不然新文件不会被提交。  
+2. 如果没有新文件，可以使用`git commit -am`命令，就相当于先`add`再`commit -m`。（`-a`即把当前所有修改了的文件添加到暂存）  
+3. 一次`commit`前可以多次`add`，`add`够了再`commit`也可以。
+
+---
+---
+# [时光穿梭机](https://www.liaoxuefeng.com/wiki/896043488029600/896954074659008)
+接下来介绍如何在版本间进行切换。  
+当我们修改了工作区的文件，可以使用`git status`命令查看：  
+![git_status](images/git_status.png)  
+图片中红字的部分就是已修改但没有`add`的文件。  
+如果想要查看修改的内容，就使用`git diff [file]`命令：  
+![git_diff](images/git_diff.png)  
+结果中前面有减号，红色的部分为删减部分；前面有加号，绿色的为新增的部分。  
+**如果修改过多，可能出现缩略显示的情况，即在Bash窗口最下部显示一个半角冒号`:`，这时按上下键可以翻看全部内容；不想看可以按`ｑ`结束*  
+![git_q](images/git_q.png)  
+如果已经`add`过，可以使用`git diff --staged`查看`add`时与最后一次提交之间做出修改。这里不再贴图。  
+将修改`add`到暂存区后，再查看`git status`，结果如图：  
+![status_after_adding](images/status_after_adding.png)  
+
+
+---
+
+
 # 命令:
 - <kbd>`mkdir dir`</kbd>: 创建空目录  
 - <kbd>`cd dir`</kbd>: 转到目录  
-- <kbd>`pwd`</kbd>: 显示当前目录(***<font color=red>P</font>rint <font color=red>W</font>orking <font color=red>D</font>irectory***)  
+- <kbd>`pwd`</kbd>: 显示当前目录  
+- <kbd>`ls`</kbd>: 查看当前目录下的文件和文件夹  
+  - <kbd>`-ah`</kbd>: 查看包括隐藏文件在内的所有文件和文件夹  
 - <kbd>`cat filename`</kbd>: 查看文件*filename*的内容
 - <kbd>`git init`</kbd>: 把这个目录编程Git可以管理的仓库
 - <kbd>`git add`</kbd>: 把文件添加到仓库
@@ -30,6 +97,8 @@
         > 478fe7926edef5a859684aef8cea42b9a62af2f7 (HEAD -> master) The first checkpoint  
         > 5585b10e28bcf75936ea56d235f7170dc43359fc Start taking note.
 - <kbd>`git reflog`</kbd>: 查看命令历史(包括`commit`、`reset`等等)  
+
+## 
 
 ## 撤销更改
 - <kbd>`git checkout -- filename`</kbd>: 将*filename*恢复到最近一次`add`或`commit`的状态。
@@ -83,6 +152,9 @@
 克隆成功后效果如图：
 ![succeed1](images/clone_succeeded1.png)
 ![succeed2](images/clone_succeeded2.png)
+
+## 分支管理
+
 
 ---
 ---

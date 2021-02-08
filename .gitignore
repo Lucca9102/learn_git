@@ -1,4 +1,9 @@
+# 用来保存临时文件
 temp/
+
+# 教材pdf
 *.pdf
+
+# 保存了我的SSH信息
 ssh.png
 ssh_info.txt
