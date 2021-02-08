@@ -1,3 +1,4 @@
+*本文为廖雪峰老师网站Git教程的学习笔记*
 # 命令:
 - <kbd>`mkdir dir`</kbd>: 创建空目录  
 - <kbd>`cd dir`</kbd>: 转到目录  
@@ -39,14 +40,31 @@
   - <kbd>`HEAD <file>`</kbd>: 将暂存区的修改撤销(unstage)掉，重新放回工作区。不会删除当前的修改。
   - <kbd>*`commit id`*</kbd>: 回退到该版本号对应的版本
 
-# 删除文件
+## 删除文件
 - <kbd>`git rm filename`</kbd>: 在版本库中删除文件。  
   - 如果直接在资源管理器中删除文件(例如: `rm filename`)，会导致工作区和版本库不一致。这时的选择有：  
     1. 要删，在版本库删除文件，<s>再您🐎的见</s>
     2. 误删，从版本库恢复文件(如果没提交过就拉倒了)。当然，误删的文件可以恢复，但是会丢失最近一次提交后的更改。因此删文件要谨慎！  
-    > 在这里提个醒，版本库包括暂存区和分支哦
+    > 在这里提个醒，版本库包括暂存区和分支哦，忘了建议回顾一下
 
   - 如果使用`git rm`命令删除，则文件会同时在版本库和文件资源管理器中被删除，好像也不会进入回收站。
+
+## 远程仓库
+### 使用GitHub
+#### 添加SSH Key
+1. 设置SSH key:
+   在Git Bash中输入命令: <kbd>`ssh-keygen -t rsa -C "email@example.com`</kbd>，个人使用时一路回车即可(因为没有太高的保密需求)。我生成的第一个SSH key位于`C://Users/Lucca/.ssh`目录下。需要注意的是，生成的两个文件分别名为`id_rsa`和`id_rsa.pub`。其中<font color=red>`id_rsa`为私钥，不要泄露给别人</font>；`id_rsa.pub`为公钥，就随便了。
+2. 登录GitHub，打开"Account Settings"中的"SSH Keys"界面，然后点击"Add SSH Key"，Title自拟<s>，正文不少于800字</s>，在Key栏粘贴`id_rsa.pub`文件的内容(用记事本打开即可)。  
+   ![add_ssh](images/add_ssh.png)
+   添加后即可在页面看到
+   ![add_succeed](images/succeed_adding_ssh_key.png)
+
+- **注意**：在GitHub上免费托管的仓库是公开的，但只有自己能够修改。如果想自己雪藏仓库，可以成为GitHub的付费用户，享受私人仓库；或者自己建立一个Git服务器。
+
+#### 添加远程库
+1. 在GitHub上创建一个新的repo(自己找吧！)，然后给仓库起个名字，比如我的是`Learning-Git`。其他保持默认，创建仓库即可。
+   现在这个仓库是空的
+2. 
 
 ---
 ---
@@ -56,4 +74,4 @@
 使用`git add`时，会将文件修改添加到暂存区；
 使用`git commit`时，则会把暂存区的内容提交到当前分支。
 - Git管理的是修改，而不是文件。即使新增一行也算修改。提交文件前必须先添加到暂存区，再提交到版本库。如果没有`add`，则修改不会被提交
-![stage](images\stage.png)
+![stage](images/stage.png)
