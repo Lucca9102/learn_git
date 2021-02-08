@@ -47,70 +47,75 @@
 ---
 ---
 # [时光穿梭机](https://www.liaoxuefeng.com/wiki/896043488029600/896954074659008)
-接下来介绍如何在版本间进行切换。  
-当我们修改了工作区的文件，可以使用`git status`命令查看：  
-![git_status](images/git_status.png)  
-图片中红字的部分就是已修改但没有`add`的文件。  
-如果想要查看修改的内容，就使用`git diff [file]`命令：  
-![git_diff](images/git_diff.png)  
-结果中前面有减号，红色的部分为删减部分；前面有加号，绿色的为新增的部分。  
-**如果修改过多，可能出现缩略显示的情况，即在Bash窗口最下部显示一个半角冒号`:`，这时按上下键可以翻看全部内容；不想看可以按`ｑ`结束*  
-![git_q](images/git_q.png)  
-如果已经`add`过，可以使用`git diff --staged`查看`add`时与最后一次提交之间做出修改。这里不再贴图。  
-将修改`add`到暂存区后，再查看`git status`，结果如图：  
-![status_after_adding](images/status_after_adding.png)  
+接下来介绍如何在版本间进行切换。在这之前我们要了解如何查看修改：  
+- 当我们修改了工作区的文件，可以使用`git status`命令查看：  
+  ![git_status](images/git_status.png)  
+  图片中红字的部分就是已修改但没有`add`的文件。  
+  如果想要查看修改的内容，就使用`git diff [file]`命令：  
+  ![git_diff](images/git_diff.png)  
+  结果中前面有减号，红色的部分为删减部分；前面有加号，绿色的为新增的部分。  
+  **如果修改过多，可能出现缩略显示的情况，即在Bash窗口最下部显示一个半角冒号`:`，这时按上下键可以翻看全部内容；不想看可以按`ｑ`结束*  
+  ![git_q](images/git_q.png)  
 
+- 如果已经`add`过，可以使用`git diff --staged`查看`add`时与最后一次提交之间做出修改。这里不再贴图。  
+  将修改`add`到暂存区后，再查看`git status`，结果如图：  
+  ![status_after_adding](images/status_after_adding.png)  
+
+- 提交后，`git status`：  
+  ![status_after_committing](images/status_after_committing.png)  
+  可以看到这时显示工作目录是干净的(working tree clean)，没有要提交的修改。
+
+## [版本回退](https://www.liaoxuefeng.com/wiki/896043488029600/897013573512192)
+1. 使用`git log`，查看历史提交记录。  
+  例如：  
+  ![git_log](images/git_log.png)  
+  其中<b><i>`478fe7...`</i></b>和<b><i>`5585b10...`</i></b>是<kbd>**`commit id`**</kbd>(版本号)  
+  如果决定输出太长，不方便查看，可以使用`git log --pretty=oneline`，这样提交信息会被缩减到一行内显示。  
+  ![git_log_pretty_oneline](images/git_log_pretty_oneline.png)  
+  这样，我们就得到了每次提交的版本号和相应的提示信息。提醒一下，Git的版本号不是递增的数字，而是一个SHA1计算出来的非常大的十六进制数字。这样可以更好地适应多人在同一个版本库里工作的情况。  
+2. 获得版本号后，即可用`git reset --hard HEAD^`回退到上一个提交的版本。`HEAD`表示的是当前的版本，每加一个`^`就表示向前一个版本。如果版本相差太远，比如100个版本，也可以用`HEAD~100`来表示。当然，`HEAD`也可以换成上面提到的版本号。  
+*这里的`--hard`会使文件退回到选定的版本，未保存的修改将丢失*  
+如果不慎选错了版本，也有办法补救。Git的版本回退仅仅是将`HEAD`指针指向这个版本，并更新工作区文件。所以再次`reset`到原来想要的版本号即可。  
+![HEAD1](images/HEAD1.png)  
+![HEAD2](images/HEAD2.png)  
+如果不记得版本号，就用`git reflog`命令查看命令记录，包括`reset`和`commit`等。  
+![git_reflog](images/git_reflog.png)  
+图中前面的黄字部分就是操作时版本号的一部分，用它们`reset`即可。
 
 ---
 
 
 # 命令:
-- <kbd>`mkdir dir`</kbd>: 创建空目录  
-- <kbd>`cd dir`</kbd>: 转到目录  
-- <kbd>`pwd`</kbd>: 显示当前目录  
-- <kbd>`ls`</kbd>: 查看当前目录下的文件和文件夹  
+- `$` <kbd>`mkdir dir`</kbd>: 创建空目录  
+- `$` <kbd>`cd dir`</kbd>: 转到目录  
+- `$` <kbd>`pwd`</kbd>: 显示当前目录  
+- `$` <kbd>`ls`</kbd>: 查看当前目录下的文件和文件夹  
   - <kbd>`-ah`</kbd>: 查看包括隐藏文件在内的所有文件和文件夹  
-- <kbd>`cat filename`</kbd>: 查看文件*filename*的内容
-- <kbd>`git init`</kbd>: 把这个目录编程Git可以管理的仓库
-- <kbd>`git add`</kbd>: 把文件添加到仓库
-- <kbd>`git commit`</kbd>
+- `$` <kbd>`cat filename`</kbd>: 查看文件*filename*的内容
+- `$` <kbd>`git init`</kbd>: 把这个目录编程Git可以管理的仓库
+- `$` <kbd>`git add`</kbd>: 把文件添加到仓库
+- `$` <kbd>`git commit`</kbd>
   - <kbd>`-m "xxx"`</kbd>: 把文件提交到仓库
-- <kbd>`git status`</kbd>: 查看仓库的当前状态
-- <kbd>`git diff`</kbd>: 查看修改前后的不同  
+- `$` <kbd>`git status`</kbd>: 查看仓库的当前状态
+- `$` <kbd>`git diff`</kbd>: 查看修改前后的不同  
   - <kbd>`version -- filename`</kbd>: 查看<i>`version`</i>版本与当前状态的差别。(`version`可以是版本号也可以是`HEAD`表示的编号)
-- <kbd>`git log`</kbd>: 查看历史提交记录
-  - 例如：
-    > ```
-    > commit 478fe7926edef5a859684aef8cea42b9a62af2f7 (HEAD -> master)
-    > Author: Lucca9102 <luccachina@163.com>
-    > Date:   Fri Feb 5 21:46:31 2021 +0800
-    > 
-    >     The first checkpoint
-    > 
-    > commit 5585b10e28bcf75936ea56d235f7170dc43359fc
-    > Author: Lucca9102 <luccachina@163.com>
-    > Date:   Fri Feb 5 21:26:07 2021 +0800
-    > ```
-    其中<b><i>478fe7...</i></b>是<kbd>**`commit id`**</kbd>(版本号)
+- `$` <kbd>`git log`</kbd>: 查看历史提交记录
   - <kbd>`--pretty=oneline`</kbd>: 将简略信息在一行内显示出来
-    - 例如：
-        > 478fe7926edef5a859684aef8cea42b9a62af2f7 (HEAD -> master) The first checkpoint  
-        > 5585b10e28bcf75936ea56d235f7170dc43359fc Start taking note.
-- <kbd>`git reflog`</kbd>: 查看命令历史(包括`commit`、`reset`等等)  
+- `$` <kbd>`git reflog`</kbd>: 查看命令历史(包括`commit`、`reset`等等)  
 
 ## 
 
 ## 撤销更改
-- <kbd>`git checkout -- filename`</kbd>: 将*filename*恢复到最近一次`add`或`commit`的状态。
+- `$` <kbd>`git checkout -- filename`</kbd>: 将*filename*恢复到最近一次`add`或`commit`的状态。
   - <font color=red>注意</font>: 恢复的部分只包括<u>已保存</u>，<u>未提交</u>，<u>未放入暂存区</u>的修改。另外，命令中的<b>`--`</b>是必要的，否则会变成另一个命令。
-- <kbd>`git reset`</kbd>: 回退版本
+- `$` <kbd>`git reset`</kbd>: 回退版本
   - <kbd>`--hard HEAD`</kbd>: 退回当前(最后一次提交的)版本并删除修改。
     - 这里的<kbd>`HEAD`</kbd>表示当前版本，类似的，<kbd>`HEAD^`</kbd>表示上一个版本，<kbd>`HEAD^^`</kbd>表示上上一个版本。上100个版本可以写成<kbd>`HEAD~100`</kbd>。
   - <kbd>`HEAD <file>`</kbd>: 将暂存区的修改撤销(unstage)掉，重新放回工作区。不会删除当前的修改。
   - <kbd>*`commit id`*</kbd>: 回退到该版本号对应的版本
 
 ## 删除文件
-- <kbd>`git rm filename`</kbd>: 在版本库中删除文件。  
+- `$` <kbd>`git rm filename`</kbd>: 在版本库中删除文件。  
   - 如果直接在资源管理器中删除文件(例如: `rm filename`)，会导致工作区和版本库不一致。这时的选择有：  
     1. 要删，在版本库删除文件<s>，再您的见</s>
     2. 误删，从版本库恢复文件(如果没提交过就拉倒了)。当然，误删的文件可以恢复，但是会丢失最近一次提交后的更改。因此删文件要谨慎！  
