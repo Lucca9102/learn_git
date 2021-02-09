@@ -147,6 +147,11 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
    在`C:/Users/yourname`文件夹下如果有`.ssh`目录，里面有`id_rsa`和`id_rsa.pub`文件的话，就不需要创建了。  
    如果没有，就在Git Bash中输入以下指令：  
    `$ ssh-keygen -t rsa -C "youremail@example.com"`  
+   *参考[ssh-keygen -t rsa -C "content" 解释](https://www.cnblogs.com/xunzhiyou/p/12117261.html)*  
+   > -t: The type of the key to generate  
+   > -C: comment to identify the key  
+   > 也就是说`-C`后面不一定要接邮箱，随便写点什么都行。  
+
    都是普通老百姓，也没有那么高的保密需要，所以接下来一路回车就行。不放心就查一下怎么加密码。回车到底后，SSH Key就建立完了，可以在用户主目录下的`.ssh`文件夹里找到`id_rsa`和`id_rsa.pub`两个文件。  
    需要注意的是，生成的两个文件分别名为`id_rsa`和`id_rsa.pub`。其中<font color=red>`id_rsa`为私钥，不要泄露给别人</font>；`id_rsa.pub`为公钥，就随便了。  
 3. 登录GitHub，打开"Account Settings"中的"SSH Keys"界面，然后点击"Add SSH Key"，Title自拟<s>，正文不少于800字</s>，在Key栏粘贴`id_rsa.pub`文件的内容(用记事本打开即可)。  
