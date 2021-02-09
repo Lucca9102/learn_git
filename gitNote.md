@@ -1,11 +1,11 @@
-*本文为[廖雪峰老师网站Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的学习笔记*
+*本文为[廖雪峰老师网站Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的学习笔记，部分内容结合个人理解添加*
 
 # [Git简介](https://www.liaoxuefeng.com/wiki/896043488029600/896067008724000)
 > **世界上最先进的分布式版本控制系统**
 
 ---
 ## [Git的诞生](https://www.liaoxuefeng.com/wiki/896043488029600/896202815778784)
-***Linus***用两个礼拜，就用C写出了Git。
+***Linus***用两个礼拜，就用 ***C*** 写出了 ***Git*** 。
 
 ---
 ## [集中式 VS 分布式](https://www.liaoxuefeng.com/wiki/896043488029600/896202780297248)
@@ -65,14 +65,16 @@
   ![status_after_committing](images/status_after_committing.png)  
   可以看到这时显示工作目录是干净的(working tree clean)，没有要提交的修改。
 
-## [版本回退](https://www.liaoxuefeng.com/wiki/896043488029600/897013573512192)
+---
+## <span id="reset">[版本回退](https://www.liaoxuefeng.com/wiki/896043488029600/897013573512192)</span>
 1. 使用`git log`，查看历史提交记录。  
   例如：  
   ![git_log](images/git_log.png)  
   其中<b><i>`478fe7...`</i></b>和<b><i>`5585b10...`</i></b>是<kbd>**`commit id`**</kbd>(版本号)  
   如果决定输出太长，不方便查看，可以使用`git log --pretty=oneline`，这样提交信息会被缩减到一行内显示。  
   ![git_log_pretty_oneline](images/git_log_pretty_oneline.png)  
-  这样，我们就得到了每次提交的版本号和相应的提示信息。提醒一下，Git的版本号不是递增的数字，而是一个SHA1计算出来的非常大的十六进制数字。这样可以更好地适应多人在同一个版本库里工作的情况。  
+  这样，我们就得到了每次提交的版本号和相应的提示信息。  
+  *提醒一下，Git的版本号不是递增的数字，而是一个SHA1计算出来的非常大的十六进制数字。这样可以更好地适应多人在同一个版本库里工作的情况。*  
 2. 获得版本号后，即可用`git reset --hard HEAD^`回退到上一个提交的版本。`HEAD`表示的是当前的版本，每加一个`^`就表示向前一个版本。如果版本相差太远，比如100个版本，也可以用`HEAD~100`来表示。当然，`HEAD`也可以换成上面提到的版本号。  
 *这里的`--hard`会使文件退回到选定的版本，未保存的修改将丢失*  
 如果不慎选错了版本，也有办法补救。Git的版本回退仅仅是将`HEAD`指针指向这个版本，并更新工作区文件。所以再次`reset`到原来想要的版本号即可。  
@@ -83,6 +85,52 @@
 图中前面的黄字部分就是操作时版本号的一部分，用它们`reset`即可。
 
 ---
+## [工作区和暂存区](https://www.liaoxuefeng.com/wiki/896043488029600/897271968352576)
+- **工作区**  
+  在电脑中能够看到的目录，如我使用的的Git文件夹
+- **版本库**  
+  工作区中有一个隐藏目录<kbd>`.git`</kbd>，这个文件夹就是Git的版本库。版本库中最重要的东西就是称为 ***`stage`*** (或叫 ***`index`*** )的暂存区，还有Git自动创建的第一个分支<kbd>`master`</kbd>，以及指向<kbd>`master`</kbd>的指针<kbd>`HEAD`</kbd>  
+  使用`git add`时，会将文件修改添加到<font color=red>暂存区</font>；  
+  使用`git commit`时，则会把暂存区的内容提交到<font color=red>当前分支</font>。  
+  ![stage](images/stage.png)  
+
+---
+## [管理修改](https://www.liaoxuefeng.com/wiki/896043488029600/897884457270432)
+Git管理的是**修改**，而不是文件。即使增删几个字符也算修改。  
+提交文件前必须先添加到暂存区，再提交到版本库。如果没有`add`或`commit -a`，则修改不会被提交。这时用`git status`查看，还会显示有改动但没提交的文件。如果不理解可以动动手，动动脑，做一做这个实验。
+
+---
+## [撤销修改](https://www.liaoxuefeng.com/wiki/896043488029600/897889638509536)
+如果做出了不符合预期或错误的修改，想要撤销，需要分为以下几种情况讨论：
+1. 只做出了修改，没有添加到版本库  
+  <s>如果没太大改动就撤销吧，<kbd>Ctrl</kbd>+<kbd>Z</kbd>挺好使的</s>  
+  如果改得稀烂，比如我侄子来敲我的键盘，或者猴子们来我的电脑上仿写莎士比亚，那就需要Git来帮忙了。  
+  我向Git许愿，Git说，彳亍！然后留下了一串神秘代码:  
+  ***`git checkout -- [file]`***  
+  `checkout`命令会丢弃工作区的修改，把文件恢复到最后一次添加到版本库时的状态，即最后一次`add`或`commit`时的样子。  
+  *<font color=red>注意</font>: 里面的<kbd>`--`</kbd>不能丢，否则会变成另一个命令*  
+2. 已经将修改`add`到了暂存库，但没有`commit`  
+   1. 使用`git reset HEAD [file]`命令，把暂存区的修改**撤销(*unstage*)**，重新放回工作区。
+   2. `git restore --staged <file>`，作用和`reset`一样，不过文件名是必要的。全部恢复时就使用`git restore --staged .` 即可，<kbd>`.`</kbd>就表示全部文件。(不过restore这个命令我不太熟悉，使用前建议查表)
+3. 已经`commit`，但是没有推送到远程仓库  
+  还有救，按照[版本回退](#reset)一节的方法可以`reset`回来。
+4. 已经推送到远程仓库  
+  **救不了了，等着被制裁吧**
+
+---
+## [删除文件](https://www.liaoxuefeng.com/wiki/896043488029600/900002180232448)
+1. 直接在资源管理器删除  
+  直接删除或使用Linux命令`rm [file]`(别问Windows命令，我也不会)。这样删除会导致版本库和工作区的不一致，这时有两个选择：  
+   1. 误删  
+    从版本库恢复文件(如果没提交过就拉倒了)，使用`git checkout -- [file]`即可。  
+    当然，误删的文件可以恢复，但是会**丢失最近一次添加到版本库后的更改**。因此删文件要谨慎！ 
+   2. 我要删我要删！  
+    那就需要在版本库里也删除文件。详见下一条。
+2. 在版本库中删除文件  
+   <s>使用`rm -rf`命令</s> **(千万不要尝试！)**  
+   使用`git rm [file]`命令，会同时删除工作区的文件和版本库的文件。
+
+---
 
 
 # 命令:
@@ -90,15 +138,16 @@
 - `$` <kbd>`cd dir`</kbd>: 转到目录  
 - `$` <kbd>`pwd`</kbd>: 显示当前目录  
 - `$` <kbd>`ls`</kbd>: 查看当前目录下的文件和文件夹  
-  - <kbd>`-ah`</kbd>: 查看包括隐藏文件在内的所有文件和文件夹  
+  - `$` <kbd>`ls -ah`</kbd>: 查看包括隐藏文件在内的所有文件和文件夹  
 - `$` <kbd>`cat filename`</kbd>: 查看文件*filename*的内容
 - `$` <kbd>`git init`</kbd>: 把这个目录编程Git可以管理的仓库
 - `$` <kbd>`git add`</kbd>: 把文件添加到仓库
 - `$` <kbd>`git commit`</kbd>
-  - <kbd>`-m "xxx"`</kbd>: 把文件提交到仓库
+  - `$` <kbd>`git commit -m "xxx"`</kbd>: 把文件提交到仓库
+  - `$` <kbd>`git commit -am "xxx"`</kbd>: 把所有已修改的文件提交到仓库
 - `$` <kbd>`git status`</kbd>: 查看仓库的当前状态
 - `$` <kbd>`git diff`</kbd>: 查看修改前后的不同  
-  - <kbd>`version -- filename`</kbd>: 查看<i>`version`</i>版本与当前状态的差别。(`version`可以是版本号也可以是`HEAD`表示的编号)
+  - `$` <kbd>`git diff version -- filename`</kbd>: 查看<i>`version`</i>版本与当前状态的差别。(`version`可以是版本号也可以是`HEAD`表示的编号)
 - `$` <kbd>`git log`</kbd>: 查看历史提交记录
   - <kbd>`--pretty=oneline`</kbd>: 将简略信息在一行内显示出来
 - `$` <kbd>`git reflog`</kbd>: 查看命令历史(包括`commit`、`reset`等等)  

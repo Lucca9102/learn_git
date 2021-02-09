@@ -1,0 +1,1 @@
+A file used for testing `rm`.
