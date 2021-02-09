@@ -109,6 +109,10 @@ Git管理的是**修改**，而不是文件。即使增删几个字符也算修�
   ***`git checkout -- [file]`***  
   `checkout`命令会丢弃工作区的修改，把文件恢复到最后一次添加到版本库时的状态，即最后一次`add`或`commit`时的样子。  
   *<font color=red>注意</font>: 里面的<kbd>`--`</kbd>不能丢，否则会变成另一个命令*  
+  不过我在尝试时发现(我使用VS Code编辑)，未保存的修改不会被清除，但是在保存时会提示我当前文件内容较新，无法保存。需要用我的版本和文件内容进行比较，或覆盖文件内容。如图：  
+  ![VSCode](images/VSCode.png)  
+  因为不想找麻烦，所以我一般会保存后再恢复。  
+
 2. 已经将修改`add`到了暂存库，但没有`commit`  
    1. 使用`git reset HEAD [file]`命令，把暂存区的修改**撤销(*unstage*)**，重新放回工作区。
    2. `git restore --staged <file>`，作用和`reset`一样，不过文件名是必要的。全部恢复时就使用`git restore --staged .` 即可，<kbd>`.`</kbd>就表示全部文件。(不过restore这个命令我不太熟悉，使用前建议查表)
@@ -128,12 +132,67 @@ Git管理的是**修改**，而不是文件。即使增删几个字符也算修�
     那就需要在版本库里也删除文件。详见下一条。
 2. 在版本库中删除文件  
    <s>使用`rm -rf`命令</s> **(千万不要尝试！)**  
-   使用`git rm [file]`命令，会同时删除工作区的文件和版本库的文件。
+   使用`git rm [file]`命令，会同时删除工作区的文件和版本库的文件。  
+   *使用`git rm`命令删除的文件<u>**不会进入回收站**</u>，操作前务必考虑清楚*
 
 ---
+---
+# [远程仓库](https://www.liaoxuefeng.com/wiki/896043488029600/896954117292416)
+Git是分布式版本控制系统，同一个Git仓库可以分布到不同的机器上。分布的方法就是各台机器克隆原始版本库到本地。每台机器上的版本库都是一样的，没有主次之分。  
+在实际操作中，通常是一台机器作为服务器，全天上班，其他人从这里<b>克隆(clone)</b>版本库、将自己的提交<b>推送(push)</b>到服务器以及从服务器仓库中<b>拉取(pull)</b>别人的提交。  
+我们可以自己搭建一台服务器，但是现在我还不会XD。所以这一段将介绍利用**GitHub**创建远程仓库。  
+在开始之前，需要准备以下几点：  
+1. 注册GitHub账号
+2. 创建SSH Key  
+   在`C:/Users/yourname`文件夹下如果有`.ssh`目录，里面有`id_rsa`和`id_rsa.pub`文件的话，就不需要创建了。  
+   如果没有，就在Git Bash中输入以下命令：  
+   `$ ssh-keygen -t rsa -C "youremail@example.com"`  
+   都是普通老百姓，也没有那么高的保密需要，所以接下来一路回车就行。不放心就查一下怎么加密码。回车到底后，SSH Key就建立完了，可以在用户主目录下的`.ssh`文件夹里找到`id_rsa`和`id_rsa.pub`两个文件。  
+   需要注意的是，生成的两个文件分别名为`id_rsa`和`id_rsa.pub`。其中<font color=red>`id_rsa`为私钥，不要泄露给别人</font>；`id_rsa.pub`为公钥，就随便了。  
+3. 登录GitHub，打开"Account Settings"中的"SSH Keys"界面，然后点击"Add SSH Key"，Title自拟<s>，正文不少于800字</s>，在Key栏粘贴`id_rsa.pub`文件的内容(用记事本打开即可)。  
+   ![add_ssh](images/add_ssh.png)
+   添加后即可在页面看到
+   ![add_succeed](images/succeed_adding_ssh_key.png)  
+   Git支持SSH协议，所以GitHub有了公钥后，就可以确认推送人的身份，确保只有我自己可以提交。  
 
+- **注意**：在GitHub上免费托管的仓库是公开的，但只有自己能够修改。如果想自己雪藏仓库，可以成为GitHub的付费用户，享受私人仓库；或者自己建立一个Git服务器。  
 
-# 命令:
+---
+## [添加远程库](https://www.liaoxuefeng.com/wiki/896043488029600/898732864121440)
+1. 建立远程库  
+   在GitHub上创建一个新的repo(自己找吧！)，然后给仓库起个名字，比如我的是`Learning-Git`。其他保持默认，创建仓库即可。
+   现在这个仓库是空的，我们可以从这个仓库克隆出新仓库，也可以把一个已有的本地仓库与之关联，然后把本地仓库的内容推送到GitHub仓库。  
+2. 关联远程库  
+   在Git Bash中输入命令`git remote add origin git@github.com:Lucca9102/Learning-Git`，把仓库关联到GitHub远程仓库。添加后，远程库就叫`origin`。  
+3. 把本地内容推送到远程  
+   使用`git push`命令，实际上就是把当前的分支`master`推送到远程。  
+   第一次推送时，远程库是空的。使用使用`-u`参数，即`git push -u origin master`。这样Git不但会把本地的`master`分支内容推送到远程新的`master`分支，还会把本地的`master`分支和远程`master`分支关联起来。在以后的推送或者拉取时就可以简化命令，使用`git push origin master`即可。  
+     
+   第一次使用Git的`clone`或`push`命令连接GitHub时，会得到警告。警告大意就是要确认GitHub的Key的指纹信息是否真的来自GitHub的服务器。如果不放心可以和[GitHub的RSA Key的指纹信息](https://docs.github.com/en/github/authenticating-to-github/githubs-ssh-key-fingerprints)对照一下，然后输入`yes`回车即可。之后GitHub的Key就会被添加到信任列表，不会再有警告了。  
+   ![warning](images/warning_while_cloning.png)  
+   ![githubssh](images/github_ssh.png)  
+
+---
+## [从远程库克隆](https://www.liaoxuefeng.com/wiki/896043488029600/898732792973664)
+在想要克隆远程库的目录下打开Git Bash，有多种方法可以克隆仓库。下面根据其他同学(?)的笔记介绍两种方法：  
+1. git(SSH协议) -> 默认，最快  
+   `git clone git@github.com:lucca9102/Learning-Git.git`
+2. https -> 慢，每次都要输口令；不支持https就不能用  
+   `git clone https://github.com/lucca9102/Learning-Git.git`
+
+克隆成功后效果如图：  
+![succeed1](images/clone_succeeded1.png)  
+![succeed2](images/clone_succeeded2.png)  
+
+---
+---
+# [分支管理](https://www.liaoxuefeng.com/wiki/896043488029600/896954848507552)
+以我之前小学期做的五子棋游戏为例。程序主要实现的功能有计时、游戏和聊天三项。假设这三项分别分给了两个人做，A已经做好了游戏的部分，而计时做了一半；B的聊天部分出了小bug，会影响游戏进行。这时如果一次性把功能合并在一起，程序的任一部分都没法正常运行。  
+这时，为了三个功能互不影响地继续开发，B创建了一个属于自己的分支。A看不到这个分支，还在原来的分支上正常工作。B在自己的分支上工作，开发完毕后，再一次性合并到原来的分支上。这样既安全，又不影响A工作。  
+在这种情形下，又体现出了Git相较SVN等的优势：创建、切换和删除分支非常快，远远超过了SVN等。  
+
+-------------------------------------------------------------
+# 命令总结:
 - `$` <kbd>`mkdir dir`</kbd>: 创建空目录  
 - `$` <kbd>`cd dir`</kbd>: 转到目录  
 - `$` <kbd>`pwd`</kbd>: 显示当前目录  
