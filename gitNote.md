@@ -210,7 +210,7 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
 ![del_dev](images/del_dev.png)  
 总结一下，大致步骤就是：
 1. 创建分支
-   使用`git checkout -b dev`指令，`-b`参数表示创建并切换分支。这条指令也就相当于一下两条指令：  
+   使用`git checkout -b dev`指令，`-b`参数表示创建并切换分支。这条指令也就相当于以下两条指令：  
    ```
    $ git branch dev
    $ git checkout dev
