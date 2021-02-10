@@ -2,8 +2,7 @@
 temp/
 
 # 教材pdf
-*.pdf
+ebooks/
 
-# 保存了我的SSH信息
-ssh.png
-ssh_info.txt
+# 保存私人信息
+private/
