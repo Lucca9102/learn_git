@@ -235,3 +235,5 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
 4. 删除分支  
    使用`git branch -d dev`删除`dev`分支，和它说再见。  
    ![del_dev2](images/del_dev2.png)
+
+Test merge when there are conflicts.
