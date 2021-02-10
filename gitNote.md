@@ -235,11 +235,6 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
 
 4. 删除分支  
    使用`git branch -d dev`删除`dev`分支，和它说再见。  
-<<<<<<< HEAD
-   ![del_dev2](images/del_dev2.png)
-
-Test merge when there are conflicts.
-=======
    ![del_dev2](images/del_dev2.png)  
 
 ---
@@ -249,5 +244,54 @@ Test merge when there are conflicts.
    $ git switch -c feature1  
    Switched to a new branch 'feature1'
    ```
-2. 做出修改并提交
->>>>>>> feature1
+2. 在`feature1`做出修改并提交
+   ```
+   $ git commit -am "test commit on feature1"
+   [feature1 a990895] test commit on feature1
+   1 file changed, 12 insertions(+), 2 deletions(-)
+   ```
+3. 切换回主分支`master`  
+   ```
+   $ git switch master
+   Switched to branch 'master'
+   Your branch is up to date with 'origin/master'.
+   ```  
+   （如果有提交没有被推送到远程仓库，就会出现下面的提醒，不会影响实验效果）  
+   ```
+   $ git switch master
+   Switched to branch 'master'
+   Your branch is ahead of 'origin/master' by 1 commit.
+     (use "git push" to publish your local commits)
+   ```  
+4. 在`master`做出修改并提交  
+   现在分支状态如下图：
+   ![drawfeature1](images/drawfeature1.png)
+5. 使用`git merge feature1`合并两个分支。这时可以看到：  
+   ![merging](images/merging.png)  
+   就是说两个分支的内容有冲突，需要手动解决后才能提交。  
+   此时查看`git status`：  
+   ![status_while_merging](images/status_while_merging.png)  
+   *此时`master`除以`unmerged`状态，是无法使用`checkout`等命令的*  
+  
+   此时查看冲突的文件，可以发现Git用`<<<<<<< HEAD`标记了当前分支的更改；用`>>>>>>> [branch-name]`标记冲突分支的更改；用`=======`分隔冲突的内容。大致如下：  
+   ```
+   (不冲突的内容...)
+
+   <<<<<<< HEAD
+   (当前分支的修改...)
+   =======
+   (传入分支的修改...)
+   >>>>>>> [branch-name]
+   ```
+   ![merge_when_there_are_conflicts](images/merge_when_there_are_conflicts.png)  
+
+6. 手动处理冲突，并再次提交，这样就完成了一次有冲突的合并  
+   ![drawmerge](images/drawmerge.png)
+7. \* 删除`feature1`分支。
+
+做完以上实验后，可以使用`git log --graph`命令查看分支的合并情况：  
+![git_log_graph](images/git_log_graph.png)  
+*其中`--abbrev-commit`是将版本号缩写的意思。更多参数含义可以参考[git 使用详解（5）-- get log 查看提交历史](https://blog.csdn.net/wh_19910525/article/details/7468549)*  
+  
+在合并分支后，`master`和`feature1`的`commit`记录会按时间顺序被记录在`master`的`log`里：
+![log_after_merging](images/log_after_merging.png)
