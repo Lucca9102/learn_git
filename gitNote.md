@@ -473,3 +473,25 @@ Deleted branch form (was 01e282d).
 4. 在`test`分支上时不能删除`test`分支，就像不能靠左脚踩右脚的方式起飞  
 
 ---
+## [多人协作](https://www.liaoxuefeng.com/wiki/896043488029600/900375748016320)
+我们从远程克隆仓库时，实际上是Git自动把本地的`master`分支和远程的`master`分支对应起来了，并且，远程库的默认名称是`origin`。  
+要查看远程库的信息，用`git remote`：  
+```
+$ git remote
+origin
+```
+
+或`git remote -v`显示更详细的信息：
+```
+$ git remote -v
+origin  git@github.com:Lucca9102/Learning-Git.git (fetch)
+origin  git@github.com:Lucca9102/Learning-Git.git (push)
+```
+
+上面显示了可以 **抓取(*fetch*)** 和 **推送(*push*)** 的`origin`地址。如果没有推送权限，就看不到push地址。
+
+### 推送分支
+推送分支就是把该分支上所有的本地提交推送到远程库。推送时要指定本地分支（如`master`）。这样Git就会把该分支推送到远程库对应的远程分支上。  
+当然，并不是所有的分支都需要推送到远程库。如果需要协同工作，就需要推送上去；自己就能改的bug分支什么的，放在本地就行。 
+
+### 抓取分支

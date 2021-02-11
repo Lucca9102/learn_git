@@ -47,7 +47,7 @@
 ---
 ## 远程仓库
 `$` <kbd>`ssh-keygen`</kbd>: 设置SSH Key  
-  - `-t [type]`: 要生成密钥的类型
+  - `-t [type]`: 要生成密钥的类型(学习时使用了rsa)
   - `-C "content"`: 用来识别密钥的注释  
 
 `$` <kbd>`git remote add origin git@github.com:yourname/yourrepo`</kbd>: 将仓库关联到远程仓库(以GitHub为例)  
