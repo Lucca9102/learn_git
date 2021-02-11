@@ -374,3 +374,73 @@ stash@{0}: WIP on dev: d03e5fa Updated instructions.md
    Dropped refs/stash@{0} (8c5d4cd4d44cc5262ab1e5684945061dfb83f13d)
    ```
 
+完成以上步骤后，我想把`dev`上更新的笔记同步到`instructions`上(或把`instructions`上的命令总结同步到`dev`上)。针对这种情况，Git提供了`git cherry-pick [commit]`命令，这个命令能够把*一个特定的提交*复制到当前分支。  
+```
+$ git cherry-pick 49e90de
+[instructions 8552e23] Test cherry-pick.
+ Date: Thu Feb 11 12:18:40 2021 +0800
+ 2 files changed, 53 insertions(+), 1 deletion(-)
+ rewrite images/branch/merge_noff_log.png (99%)
+```
+需要注意的是，这里要复制的版本号是第一行的`49e90de...`，而复制到分支`instructions`上的则是`8552e23...`。也就是说这两个commit的改动相同，但是它们是两个不同的commit。
+
+再举一个栗子帮助理解：  
+我在命令总结里发现了错别字，想要改正它，需要以下步骤：
+1. 保存当前工作区的工作  
+   ```
+   git stash
+   Saved working directory and index state WIP on dev: 49e90de Test cherry-pick.
+   ```
+2. 切换分支  
+   ```
+   $ git switch instructions
+   Switched to branch 'instructions'
+   ```
+3. 建立Bug分支`fix-typo`并切换  
+   ```
+   $ git switch -c "fix-typo"
+   Switched to a new branch 'fix-typo'
+   ```
+4. 修改错别字，提交  
+   ```
+   $ git commit -am "Update instructions.md"
+   [fix-typo 39a3945] Update instructions.md
+    1 file changed, 16 insertions(+), 4 deletions(-)
+   ```
+5. 切换回`instructions`分支，合并`fix-typo`，删除`fix-typo`  
+   ```
+   $ git switch instructions
+   Switched to branch 'instructions'
+
+   $ git merge fix-typo
+   Updating 8552e23..39a3945
+   Fast-forward
+    instructions.md | 20 ++++++++++++++++----
+    1 file changed, 16 insertions(+), 4 deletions(-)
+   
+   $ git branch -d fix-typo
+   Deleted branch fix-typo (was 39a3945).
+   ```
+6. 获得版本号，切换回`dev`，将*改正错别字的这次提交*复制到`dev`上  
+   ```
+   $ git log --pretty=oneline --abbrev-commit
+   39a3945 (HEAD -> instructions) Update instructions.md
+
+   $ git switch dev
+   Switched to branch 'dev'
+
+   $ git cherry-pick 39a3945
+   [dev 0e01e11] Update instructions.md
+    Date: Thu Feb 11 14:17:39 2021 +0800
+    1 file changed, 16 insertions(+), 4 deletions(-)
+   ```
+
+7. 恢复工作区，继续工作  
+   ```
+   $ git stash pop
+   On branch dev
+   Changes not staged for commit:
+     (use "git add <file>..." to update what will be committed)
+     (use "git restore <file>..." to discard changes in working directory)
+           modified:   gitNote.md
+   ```
