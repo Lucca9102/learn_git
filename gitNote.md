@@ -283,7 +283,7 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
    (传入分支的修改...)
    >>>>>>> [branch-name]
    ```
-   ![merge_when_there_are_conflicts](images/merge_when_there_are_conflicts.png)  
+   ![merge_when_there_are_conflicts](images/branch/merge_when_there_are_conflicts.png)  
 
 6. 手动处理冲突，并再次提交，这样就完成了一次有冲突的合并  
    ![drawmerge](images/branch/drawmerge.png)
@@ -321,4 +321,56 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
 
 所以团队合作看起来就是这样：  
 ![branch_strategy](images/branch/branch_strategy.png)  
+
+---
+## [Bug分支](https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136)
+> <s>在bug开发中，软件出现就像家常便饭。</s>遇到bug时，我们可以快乐建分支，修复bug，然后再合并分支，删除临时分支。  
+
+**但是**，天不遂人愿。当我们得到修复bug的任务时，我们在当前分支的任务很可能还没有完成，而我又不想提交。  
+**幸好**，Git提供了`stash`功能，可以把当前的工作现场“储藏”起来，等以后恢复现场后继续工作。  
+举个例子，现在我要完善我的命令总结文件，但是在当前`dev`分支上的笔记文件的编辑还没有完成。  
+所以我：魔法カード発動！Stashしろ！　　
+```
+$ git stash
+Saved working directory and index state WIP on dev: d03e5fa Updated instructions.md
+```  
+这样工作区已保存但没添加到版本库的部分就消失了。查看`git status`，可以看到`working tree clean`了。  
+现在我切换到`instructions`分支完善我的命令总结。  
+完成后返回`dev`分支，首先用`git stash list`看一下我们的stash列表：
+```
+$ git stash list
+stash@{0}: WIP on dev: d03e5fa Updated instructions.md
+```
+列表中有一个存储内容。  
+现在把这部分内容恢复到工作区，有两种方法：
+1. `git stash apply`，恢复内容，但不删除stash list中的内容；如果不需要了，就使用`git stash drop`清除  
+   ```
+   $ git stash apply
+   On branch dev
+   Changes not staged for commit:
+     (use "git add <file>..." to update what will be committed)
+     (use "git restore <file>..." to discard changes in working directory)
+           modified:   gitNote.md
+           modified:   images/branch/merge_noff_log.png
+   
+   no changes added to commit (use "git add" and/or "git commit -a")
+   
+   $ git stash drop
+   Dropped refs/stash@{0} (65566755d869f90f9862894ab1b44e3e3a7c49c2)
+   ```
+   这时再`git stash list`就看不到任何内容了
+
+2. `git stash pop`，一步到位，直接取出内容并删除stash  
+   ```
+   $ git stash pop
+   On branch dev
+   Changes not staged for commit:
+     (use "git add <file>..." to update what will be committed)
+     (use "git restore <file>..." to discard changes in working directory)
+           modified:   gitNote.md
+           modified:   images/branch/merge_noff_log.png
+   
+   no changes added to commit (use "git add" and/or "git commit -a")
+   Dropped refs/stash@{0} (8c5d4cd4d44cc5262ab1e5684945061dfb83f13d)
+   ```
 
