@@ -65,7 +65,9 @@
 `$` <kbd>`git switch [branch-name]`</kbd>: 切换分支  
 `$` <kbd>`git switch -c [branch-name]`</kbd>: 创建并切换到新的分支  
 `$` <kbd>`git branch`</kbd>: 查看所有分支  
-`$` <kbd>`git branch -d [branch-name]`</kbd>: 删除分支  
+  - `[branch-name]`: 建立分支
+  - `-d [branch-name]`: 删除分支
+  - `-D [branch-name]`: 强行删除分支  
 `$` <kbd>`git merge [branch]`</kbd>: 合并分支  
 `$` <kbd>`git log`</kbd>: 查看提交记录  
   - `--pretty=oneline`: 将每次提交记录缩略到一行显示，包括版本号和提交信息
@@ -85,4 +87,4 @@
     - `stash{$num}`  
   - `clear`: 清除所有stash
 
-`$` <kbd>`git cherry-pick [commit]`</kbd>: 复制某次提交到当前分支
+`$` <kbd>`git cherry-pick [commit]`</kbd>: 复制某次提交到当前分支  
