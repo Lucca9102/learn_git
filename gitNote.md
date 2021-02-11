@@ -444,3 +444,32 @@ $ git cherry-pick 49e90de
      (use "git restore <file>..." to discard changes in working directory)
            modified:   gitNote.md
    ```
+
+总结一下使用`stash`过程中的发现：  
+1. stash存储的方式类似栈，每次`stash`后，最后存入的内容标号为`stash@{0}`。取出或删除时默认的stash也是`stash@{0}`  
+2. stash的存取时的分支不需要一致，可以在一个分支`stash`，在好几个分支`apply`
+3. 假设在分支`test`进行了`stash`操作，切换回其他分支并删除`test`后，存入的`stash`仍然存在，并且在`stash list`中查看时仍然会显示`test`的分支名
+
+---
+## [Feature分支](https://www.liaoxuefeng.com/wiki/896043488029600/900394246995648)（强制删除分支）
+软件开发中，总要添加新的功能。  
+但是我们不想让尚处于实验阶段的新功能代码搞乱了主分支。所以在添加新功能时，最好新建一个feature分支，在上面开发，合并，最后删除该feature分支。  
+**但是**，假设这时接到指示，要取消开发并删除这些内容。如果已经提交过，使用`git branch -d [branch-name]`时会失败并报错：
+```
+$ git branch -d form
+error: The branch 'form' is not fully merged.
+If you are sure you want to delete it, run 'git branch -D form'.
+```
+所以要使用`git branch -D [branch-name]`强制删除：
+```
+$ git branch -D form
+Deleted branch form (was 01e282d).
+```
+
+总结一下尝试删除分支时的发现：  
+1. 如果没提交就切换分支，则修改会被保留（包括工作区和暂存区的修改），即使删除做出修改的分支后也不会消失  
+2. 如果提交了修改，之后切换分支，文件会回到目标分支的状态。删除做出修改的分支后，修改会丢失  
+3. 如果在新分支新建了文件，并做出了提交，则切换分支时文件会在工作区消失；删除分支时文件似乎确凿也就消失了  
+4. 在`test`分支上时不能删除`test`分支，就像不能靠左脚踩右脚的方式起飞  
+
+---
