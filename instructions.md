@@ -42,20 +42,21 @@
 
 ---
 ## 删除文件
-`$` <kbd>`git rm [file]`</kbd>: 在版本库和文件资源管理器中同时删除文件(不会进入回收站)  
+`$` <kbd>`git rm [file]`</kbd>: 在版本库和文件资源管理器中同时删除文件(在Win10系统下文件不会进入回收站)  
 
 ---
 ## 远程仓库
 `$` <kbd>`ssh-keygen`</kbd>: 设置SSH Key  
   - `-t [type]`: 要生成密钥的类型
-  - `-C "content"`: 用来识别密钥的注释
+  - `-C "content"`: 用来识别密钥的注释  
+
 `$` <kbd>`git remote add origin git@github.com:yourname/yourrepo`</kbd>: 将仓库关联到远程仓库(以GitHub为例)  
 `$` <kbd>`git push [alias] [branch]`</kbd>: 把`[branch]`分支上的提交推送到远程仓库`[alias]`  
   - `-u`: (首次推送时)把本地分支与远程分支关联起来，并推送本地分支到远程仓库(有这个作用，知道这个就够用了，但是具体作用建议查表)  
 
 `$` <kbd>`git clone`</kbd>: 克隆远程仓库  
   - `$` <kbd>`git clone git@github.com:yourname/yourrepo.git`</kbd>: 使用SSH协议传输，默认，更快  
-  - `$` <kbd>`git push https://github.com/yourname/yourrepo.git`</kbd>: 使用HTTPS协议传输  
+  - `$` <kbd>`git push https://github.com/yourname/yourrepo.git`</kbd>: 使用HTTPS协议传输，慢，且每次都要口令  
 
 ---
 ## 分支管理
@@ -74,3 +75,14 @@
 `$` <kbd>`git merge`</kbd>: 合并分支  
   - `--no-ff`: 合并时不要使用`Fast-Forward`模式   
   - `-m [msg]`: 如果建立了新的提交，则使用后面的字符串做提交信息
+
+`$` <kbd>`git stash`</kbd>: 暂存已修改的内容  
+  - `apply`: 取出暂存的内容  
+    - `stash{$num}`: 取出特定编号的stash  
+  - `drop`: 删除暂存的内容  
+    - `stash{$num}`  
+  - `pop`: 取出暂存内容并删除stash  
+    - `stash{$num}`  
+  - `clear`: 清除所有stash
+
+`$` <kbd>`git cherry-pick [commit]`</kbd>: 复制某次提交到当前分支
