@@ -238,7 +238,7 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
    ![del_dev2](images/branch/del_dev2.png)  
 
 ---
-## [解决冲突](https://www.liaoxuefeng.com/wiki/896043488029600/900004111093344)
+## <span id="fixConflicts">[解决冲突](https://www.liaoxuefeng.com/wiki/896043488029600/900004111093344)</span>
 1. 首先准备一个新的分支`feature1`。   
    ```
    $ git switch -c feature1  
@@ -495,3 +495,65 @@ origin  git@github.com:Lucca9102/Learning-Git.git (push)
 当然，并不是所有的分支都需要推送到远程库。如果需要协同工作，就需要推送上去；自己就能改的bug分支什么的，放在本地就行。 
 
 ### 抓取分支
+假如我的小伙伴要和我一起工作，那他就需要先clone我的远程仓库。默认情况下，克隆下来的只有`master`分支。如果想在`dev`分支上进行工作，就需要从远程获取`dev`分支：  
+1. `git switch -c dev origin/dev`
+2. `git checkout -b dev origin/dev`
+3. `git branch dev origin/dev`
+
+现在，我的小伙伴就可以在`dev`上工作并快乐`push`了。
+
+然而好景不长，有一天我的小伙伴向`origin/dev`推送了他的提交，而我也对同样的文件做出了修改。这时我想推送：  
+```
+$ git push origin test-pull
+To github.com:Lucca9102/Learning-Git.git
+ ! [rejected]        test-pull -> test-pull (fetch first)
+error: failed to push some refs to 'github.com:Lucca9102/Learning-Git.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+![push_failed](images/branch/push_failed.png)  
+
+这时就需要`git pull`，把最新的版本拉取到本地。这时Git会显示两个版本的冲突，和[解决冲突](#fixConflicts)部分的操作完全相同。解决冲突后，再提交，最后push到远程仓库即可。成功后远程仓库也会保留两个有冲突的commit，以及最后合并成的commit。  
+*个人理解就是把一个人的merge冲突变成了多个人的*
+
+提到`pull`，假如要pull `dev`分支，当处于：
+1. `dev`是在本地创建的，此前没有将其链接到远程的`dev`  
+2. 本地没有`dev`分支  
+
+两种状态时，会pull失败：
+```
+$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> dev
+```
+这时要建立本地`dev`分支和`origin/dev`分支的链接，按照提示操作即可：  
+```
+$ git branch --set-upstream-to=origin/test-pull test-pull
+Branch 'test-pull' set up to track remote branch 'test-pull' from 'origin'.
+```
+之后再pull就可以了。
+
+总结一下多人合作的过程：
+1. 创建原始仓库并推送到远程仓库
+2. 小伙伴们克隆仓库并开始工作  
+   1. 没有冲突，各种push自己的
+   2. 有冲突：  
+      1. pull下来最近的commit
+      2. 解决冲突
+      3. commit, push
+
+可能遇到的问题：
+1. clone下来只有主分支`master`
+   - `git (branch / switch -c / checkout -b) [branch-name] origin/[branch-name]`
+2. 不能pull
+   - `git branch --set-upstream-to=origin/[branch-name] [branch-name]`
