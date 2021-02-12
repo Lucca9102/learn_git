@@ -50,9 +50,14 @@
   - `-t [type]`: 要生成密钥的类型(学习时使用了rsa)
   - `-C "content"`: 用来识别密钥的注释  
 
-`$` <kbd>`git remote add origin git@github.com:yourname/yourrepo`</kbd>: 将仓库关联到远程仓库(以GitHub为例)  
+`$` <kbd>`git remote`</kbd>: 查看远程仓库信息  
+  - `-v`: 查看详细信息  
+`$` <kbd>`git remote add <shortname> <url>`</kbd>: 添加名为`<shortname>`，地址为`<url`>的远程仓库(因为笔记来源不同，所以表述可能有所不同，如上面的`<shortname>`和下面的`[alias]`其实是同样的)
+  - eg: `$ git remote add origin git@github.com:lucca9102/Learning-Git` 
+ 
 `$` <kbd>`git push [alias] [branch]`</kbd>: 把`[branch]`分支上的提交推送到远程仓库`[alias]`  
-  - `-u`: (首次推送时)把本地分支与远程分支关联起来，并推送本地分支到远程仓库(有这个作用，知道这个就够用了，但是具体作用建议查表)  
+  - `-u`: 把本地分支与远程分支关联起来，或者说让本地分支追踪(track)远程分支  
+  - `$ git push --delete`: 删除远程分支  
 
 `$` <kbd>`git clone`</kbd>: 克隆远程仓库  
   - `$` <kbd>`git clone git@github.com:yourname/yourrepo.git`</kbd>: 使用SSH协议传输，默认，更快  
@@ -61,18 +66,23 @@
 ---
 ## 分支管理
 `$` <kbd>`git checkout [branch-name]`</kbd>: 切换分支  
-`$` <kbd>`git checkout -b [branch-name]`</kbd>: 创建并切换到新的分支  
+  - `-b`: 创建并切换到新的分支  
 `$` <kbd>`git switch [branch-name]`</kbd>: 切换分支  
-`$` <kbd>`git switch -c [branch-name]`</kbd>: 创建并切换到新的分支  
+  - `-c`: 创建并切换到新的分支  
 `$` <kbd>`git branch`</kbd>: 查看所有分支  
   - `[branch-name]`: 建立分支
   - `-d [branch-name]`: 删除分支
   - `-D [branch-name]`: 强行删除分支  
+  - `-vv`: 查看详细分支信息，包括和远程分支的领先、落后情况等（这个命令并不会联网，只是使用最后一次抓取时的状态）
+  - `--merged [branch-name]`: 查看 不包含 **没有**合并到选中分支（默认为当前分支）的内容 的分支  
+  - 和`--no-merged [branch-name]`: 查看 包含 **没有**合并到选中分支（默认为当前分支）的内容 的分支  
 `$` <kbd>`git merge [branch]`</kbd>: 合并分支  
 `$` <kbd>`git log`</kbd>: 查看提交记录  
   - `--pretty=oneline`: 将每次提交记录缩略到一行显示，包括版本号和提交信息
   - `--graph`: 查看分支的合并情况，会显示一个字符组成的简单图形  
   - `--abbrev-commit`: 缩写版本号，只显示前面几个字符
+  - `--oneline`: `--pretty=oneline`和`--abbrev-commit`合用的简写
+  - `-(num)`: 显示`num`条记录，例如`$ git log -3`
 
 `$` <kbd>`git merge`</kbd>: 合并分支  
   - `--no-ff`: 合并时不要使用`Fast-Forward`模式   
@@ -88,3 +98,11 @@
   - `clear`: 清除所有stash
 
 `$` <kbd>`git cherry-pick [commit]`</kbd>: 复制某次提交到当前分支  
+
+`$` <kbd>`git push [alias] [branch]`</kbd>: 把`[branch]`分支上的提交推送到远程仓库`[alias]`  
+  - `-u`: (首次推送时)把本地分支与远程分支关联起来，并推送本地分支到远程仓库(有这个作用，知道这个就够用了，但是具体作用建议查表)  
+  - `$ git push --delete`: 删除远程分支  
+
+`$` <kbd>`git fetch <remote>`</kbd>: 抓取远程库的数据并下载到本地  
+  - `--all`: 抓取所有远程仓库
+`$` <kbd>`git pull`</kbd>: 抓取数据到本地并合并，相当于`fetch`+`merge`  

@@ -1,4 +1,6 @@
-*本文为[廖雪峰老师网站Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的学习笔记，部分内容结合个人理解添加*
+*本文为[廖雪峰老师网站Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的学习笔记，部分内容结合个人理解添加*  
+*建议参考资料：[Git官方教程 ProGit](https://git-scm.com/book/zh/v2)*  
+*本文中的代码有的用图，有的用字符，这个是看心情决定的，一般彩色的我都会截图* \_(:3 j ∠)_
 
 # [Git简介](https://www.liaoxuefeng.com/wiki/896043488029600/896067008724000)
 > **世界上最先进的分布式版本控制系统**
@@ -66,7 +68,7 @@
   可以看到这时显示工作目录是干净的(working tree clean)，没有要提交的修改。
 
 ---
-## <span id="reset">[版本回退](https://www.liaoxuefeng.com/wiki/896043488029600/897013573512192)</span>
+## [<span id="reset">版本回退</span>](https://www.liaoxuefeng.com/wiki/896043488029600/897013573512192)
 1. 使用`git log`，查看历史提交记录。  
   例如：  
   ![git_log](images/time_travel/git_log.png)  
@@ -82,7 +84,36 @@
 ![HEAD2](images/time_travel/HEAD2.png)  
 如果不记得版本号，就用`git reflog`指令查看指令记录，包括`reset`和`commit`等。  
 ![git_reflog](images/time_travel/git_reflog.png)  
-图中前面的黄字部分就是操作时版本号的一部分，用它们`reset`即可。
+图中前面的黄字部分就是操作时版本号的一部分，用它们`reset`即可。  
+
+这里补充一个在ProGit上学到的操作：
+如果一次提交时忘记添加几个文件，或者提交信息写错了，则可以使用`git commit --amend`命令提交。例如：
+```
+$ git commit -am "test-amend"
+[test-amend 51c6580] test-amend
+ 2 files changed, 27 insertions(+), 9 deletions(-)
+
+$ git log --oneline -1
+51c6580 (HEAD -> test-amend) test-amend
+
+# 这里我添加了一个文件
+$ git add .
+...
+
+$ git commit --amend -m "test amend 2"
+[test-amend 5a533bc] test amend 2
+ Date: Fri Feb 12 14:32:58 2021 +0800
+ 3 files changed, 27 insertions(+), 9 deletions(-)
+ create mode 100644 images/time_travel/file_lifecycle.png
+
+$ git log --oneline -2
+5a533bc (HEAD -> test-amend) test amend 2
+0e9d372 (origin/dev, dev) finish learning co-working
+```
+可以看到，第二次提交包括了第一次提交和后来添加的内容，并且覆盖率第一次的提交信息。最终log中只会有一个提交。
+
+> 当你在修补最后的提交时，并不是通过用改进后的提交 **原位替换** 掉旧有提交的方式来修复的， 理解这一点非常重要。从效果上来说，就像是旧有的提交从未存在过一样，它并不会出现在仓库的历史中。  
+修补提交最明显的价值是可以稍微改进你最后的提交，而不会让“啊，忘了添加一个文件”或者 “小修补，修正笔误”这种提交信息弄乱你的仓库历史。
 
 ---
 ## [工作区和暂存区](https://www.liaoxuefeng.com/wiki/896043488029600/897271968352576)
@@ -93,6 +124,8 @@
   使用`git add`时，会将文件修改添加到<font color=red>暂存区</font>；  
   使用`git commit`时，则会把暂存区的内容提交到<font color=red>当前分支</font>。  
   ![stage](images/time_travel/stage.png)  
+  下图是ProGit中的文件状态变化周期  
+  ![file_lifecycle](images/time_travel/file_lifecycle.png)
 
 ---
 ## [管理修改](https://www.liaoxuefeng.com/wiki/896043488029600/897884457270432)
@@ -221,6 +254,8 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
    这里的`git checkout [branch-name]`命令与前面的`git checkout -- [file]`很相近，容易混淆。所以新版本的Git提供了 ***`switch`*** 命令。使用方法如下：
    - 创建并切换到新的`dev`分支：`git switch -c dev`  
    - 切换到已有的`master`分支：`git switch master`  
+   
+   \* 由ProGit，`checkout`的意思是“检出”
 
 2. 修改并提交到`dev`，方法与在`master`上提交相同。  
    ![dev_commit2](images/branch/dev_commit2.png)  
@@ -238,7 +273,7 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
    ![del_dev2](images/branch/del_dev2.png)  
 
 ---
-## <span id="fixConflicts">[解决冲突](https://www.liaoxuefeng.com/wiki/896043488029600/900004111093344)</span>
+## [<span id="fix">解决冲突</span>](https://www.liaoxuefeng.com/wiki/896043488029600/900004111093344)
 1. 首先准备一个新的分支`feature1`。   
    ```
    $ git switch -c feature1  
@@ -271,7 +306,7 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
    就是说两个分支的内容有冲突，需要手动解决后才能提交。  
    此时查看`git status`：  
    ![status_while_merging](images/branch/status_while_merging.png)  
-   *此时`master`除以`unmerged`状态，是无法使用`checkout`等命令的*  
+   *此时`master`处于`unmerged`状态，是无法使用`checkout`等命令的*  
   
    此时查看冲突的文件，可以发现Git用`<<<<<<< HEAD`标记了当前分支的更改；用`>>>>>>> [branch-name]`标记冲突分支的更改；用`=======`分隔冲突的内容。大致如下：  
    ```
@@ -323,7 +358,7 @@ Git是分布式版本控制系统，同一个Git仓库可以分布到不同的�
 ![branch_strategy](images/branch/branch_strategy.png)  
 
 ---
-## [Bug分支](https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136)
+## [<span id="bug">Bug分支</span>](https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136)
 > <s>在bug开发中，软件出现就像家常便饭。</s>遇到bug时，我们可以快乐建分支，修复bug，然后再合并分支，删除临时分支。  
 
 **但是**，天不遂人愿。当我们得到修复bug的任务时，我们在当前分支的任务很可能还没有完成，而我又不想提交。  
@@ -471,6 +506,13 @@ Deleted branch form (was 01e282d).
 2. 如果提交了修改，之后切换分支，文件会回到目标分支的状态。删除做出修改的分支后，修改会丢失  
 3. 如果在新分支新建了文件，并做出了提交，则切换分支时文件会在工作区消失；删除分支时文件似乎确凿也就消失了  
 4. 在`test`分支上时不能删除`test`分支，就像不能靠左脚踩右脚的方式起飞  
+5. 只有分支上有提交，但没有merge，也没有推送到远程仓库的情况下需要强制删除，其他情况下`-d`就可以删除，不过可能出现警告。例如推送到远程后删除，会提示：
+   ```
+   $ git branch -d test-pull
+   warning: deleting branch 'test-pull' that has been merged to
+            'refs/remotes/origin/test-pull', but not yet merged to HEAD.
+   Deleted branch test-pull (was e4b6208).
+   ```
 
 ---
 ## [多人协作](https://www.liaoxuefeng.com/wiki/896043488029600/900375748016320)
@@ -499,24 +541,16 @@ origin  git@github.com:Lucca9102/Learning-Git.git (push)
 1. `git switch -c dev origin/dev`
 2. `git checkout -b dev origin/dev`
 3. `git branch dev origin/dev`
+4. (本地没有`dev`分支并且远程分支名为`dev`时)`git branch/switch/checkout dev`
+
+*用以上方法获取的分支会自动跟踪远程分支*
 
 现在，我的小伙伴就可以在`dev`上工作并快乐`push`了。
 
 然而好景不长，有一天我的小伙伴向`origin/dev`推送了他的提交，而我也对同样的文件做出了修改。这时我想推送：  
-```
-$ git push origin test-pull
-To github.com:Lucca9102/Learning-Git.git
- ! [rejected]        test-pull -> test-pull (fetch first)
-error: failed to push some refs to 'github.com:Lucca9102/Learning-Git.git'
-hint: Updates were rejected because the remote contains work that you do
-hint: not have locally. This is usually caused by another repository pushing
-hint: to the same ref. You may want to first integrate the remote changes
-hint: (e.g., 'git pull ...') before pushing again.
-hint: See the 'Note about fast-forwards' in 'git push --help' for details.
-```
 ![push_failed](images/branch/push_failed.png)  
 
-这时就需要`git pull`，把最新的版本拉取到本地。这时Git会显示两个版本的冲突，和[解决冲突](#fixConflicts)部分的操作完全相同。解决冲突后，再提交，最后push到远程仓库即可。成功后远程仓库也会保留两个有冲突的commit，以及最后合并成的commit。  
+这时就需要`git pull`，把最新的版本拉取到本地。这时Git会显示两个版本的冲突，和[解决冲突](#fix)部分的操作完全相同。解决冲突后，再提交，最后push到远程仓库即可。成功后远程仓库也会保留两个有冲突的commit，以及最后合并成的commit。  
 *个人理解就是把一个人的merge冲突变成了多个人的*
 
 提到`pull`，假如要pull `dev`分支，当处于：
@@ -541,19 +575,70 @@ If you wish to set tracking information for this branch you can do so with:
 $ git branch --set-upstream-to=origin/test-pull test-pull
 Branch 'test-pull' set up to track remote branch 'test-pull' from 'origin'.
 ```
-之后再pull就可以了。
+之后再pull就可以了。  
+
+补充：  
+这里的`$ git branch --set-upstream-to`或`$ git branch -u origin/dev`命令作用就是为本地分支设置上游分支，即令本地分支跟踪选中的远程分支。  
+设置好跟踪分支后，可以通过简写`@{upstream}`或`@{u}`来引用它的上游分支。比如我现在处在`dev`分支，并且它正在跟踪`origin/dev`分支，如果愿意可以使用`git merge @{u}`来代替`git merge origin/dev`。  
 
 总结一下多人合作的过程：
 1. 创建原始仓库并推送到远程仓库
 2. 小伙伴们克隆仓库并开始工作  
    1. 没有冲突，各种push自己的
    2. 有冲突：  
-      1. pull下来最近的commit
+      1. pull下来最新的commit
       2. 解决冲突
       3. commit, push
 
-可能遇到的问题：
-1. clone下来只有主分支`master`
-   - `git (branch / switch -c / checkout -b) [branch-name] origin/[branch-name]`
-2. 不能pull
-   - `git branch --set-upstream-to=origin/[branch-name] [branch-name]`
+可能遇到的问题：  
+1. clone下来只有主分支`master`  
+   - `git (branch / switch -c / checkout -b) [branch-name] origin/[branch-name]`  
+2. 不能pull  
+   - `git branch --set-upstream-to=origin/[branch-name] [branch-name]`  
+
+这里根据ProGit补充一些内容：
+1. 删除远程分支：`$ git push --delete [branch-name]`  
+2. 要给给定的远程仓库同步数据，可以用`git fetch <remote>`命令。这个命令查找`<remote>`(如`origin`)是哪个服务器，从中抓取本地没有的数据，并且更新本地数据库，移动`origin/master`指针到更新之后的位置。  
+   `fetch`命令并不会修改工作目录中的内容，指挥获取数据然后让用户自己合并。而`pull`命令则相当于`fetch`后再`merge`。
+
+## [Rebase](https://www.liaoxuefeng.com/wiki/896043488029600/1216289527823648)
+*本节笔记是学习[Git官方教程 **ProGit**](https://git-scm.com/book/zh/v2)所做的*  
+> 在Git 中整合来自不同分支的修改主要有两种方法：`merge`和`rebase`。
+
+### 变基的基本操作
+假如在`master`分支的某处，开发任务分叉到两个不同的分支，又各自提交了更新。  
+![simple_divergent_history](images/branch/simple_divergent_history.png)  
+整合分支最容易的方法是`merge`命令。它会把两个分支的最新快照（*也就是前面一直提到的**提交***，这里是`C3`和`C4`）以及二者最近的共同祖先（分支前的提交，`C2`）进行第三方合并，合并的结果是生成一个新的快照并提交。  
+其实还有另一种方法：可以提取图中`C4`中引入的补丁和修改，然后再`C3`的基础上应用一次。这种操作就叫做**变基 (rebase)**。可以用`rebase`命令将提交到某一分支上的所有修改都移至另一分支上，就像“重新播放”一样。  
+*我的理解是，变基的操作类似于`cherry-pick`后再整合，不记得跳到[bug分支](#bug)看一下。*  
+举例说明：
+我创建了`test1`和`test2`两个测试分支，在两个分支下分别建立了文件test1.txt和test2.txt，之后分别以"test1"和"test2"做出提交。<font color=red><b>test2先提交，test1后提交</b></font>。  
+这时我在`test2`上使用`git rebase test1`：  
+```
+# 把test1变基到test2上
+$ git rebase test2
+Successfully rebased and updated refs/heads/test1.
+
+$ git log --oneline -2
+1145418 (HEAD -> test1) test1
+2ff0606 (test2) test2
+```
+类似地，在`test1`上使用`git rebase test2`：
+```
+$ git rebase test1
+Successfully rebased and updated refs/heads/test2.
+
+$ git log --oneline -2
+1145418 (HEAD -> test2, test1) test1
+2ff0606 test2
+```
+如果做出更多提交，Git也会像上面一样，按照时间顺序整理提交成一条直线。在`log --graph`中查看时也只显示一条直线。  
+如果rebase时两条分支上有冲突，也会像merge有冲突时一样需要手动修改
+
+\* 在我看来，rebase和merge两种操作只是对时间线的处理不同。ProGit中给出的原则是：  
+> 总的原则是，只对尚未推送或分享给别人的本地修改执行变基操作清理历史，从不对已推送至别处的提交执行变基操作，这样，你才能享受到两种方式带来的便利。  
+
+目前来讲，我更倾向于merge，因为我更喜欢完整的提交历史。并且我对Git的需求仅限于图一乐顺便记一下代码笔记。所以现在我打算先搁置rebase，继续学习后面的内容。等我有需求的时候会回来补笔记的\_(:3 j∠)_   
+<font size="1">*也许吧*</font>
+
+---
