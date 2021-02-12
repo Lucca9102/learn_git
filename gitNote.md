@@ -1,4 +1,5 @@
 *本文为[廖雪峰老师网站Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的学习笔记，部分内容结合个人理解添加*  
+*标题包含的链接指向我的笔记来源；正文中链接用于文内跳转*  
 *建议参考资料：[Git官方教程 ProGit](https://git-scm.com/book/zh/v2)*  
 *本文中的代码有的用图，有的用字符，这个是看心情决定的，一般彩色的我都会截图* \_(:3 j ∠)_
 
@@ -601,7 +602,7 @@ Branch 'test-pull' set up to track remote branch 'test-pull' from 'origin'.
 2. 要给给定的远程仓库同步数据，可以用`git fetch <remote>`命令。这个命令查找`<remote>`(如`origin`)是哪个服务器，从中抓取本地没有的数据，并且更新本地数据库，移动`origin/master`指针到更新之后的位置。  
    `fetch`命令并不会修改工作目录中的内容，指挥获取数据然后让用户自己合并。而`pull`命令则相当于`fetch`后再`merge`。
 
-## [Rebase](https://www.liaoxuefeng.com/wiki/896043488029600/1216289527823648)
+## [Rebase](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA)
 *本节笔记是学习[Git官方教程 **ProGit**](https://git-scm.com/book/zh/v2)所做的*  
 > 在Git 中整合来自不同分支的修改主要有两种方法：`merge`和`rebase`。
 
@@ -642,3 +643,113 @@ $ git log --oneline -2
 <font size="1">*也许吧*</font>
 
 ---
+---
+# [打标签](https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%89%93%E6%A0%87%E7%AD%BE)
+刻舟求剑听过没？标签就是剑🗡，commit就是舟（雾）  
+说正经的，标签和commit id的关系，就像python字典中的键和值，或者域名和IP的关系。比如标签(tag)是v0.8，肯定要比版本号`1b9ed980491f1b6c5b9c9e38025ea8ff3be302ce`好记也好查得多。
+
+---
+## 列出标签
+在Git中列出标签只需使用`$ git tag`即可。指令默认列出所有标签；如果要按照通配符检索，则必须使用`-l`或`--list`选项。例如`git tag -l "v1.8.5*"`，会检出所有以`"v1.8.5"`开头的标签。
+
+---
+## 创建标签
+Git支持两种标签：**轻量标签(lightweight)** 和 **附注标签(annotated)**。  
+> 轻量标签很像一个不会改变的分支——它只是某个特定提交的引用。  
+> 而附注标签是存储在Git数据库中的一个完整的对象。它们是可以被校验的。其中包含打标签者的名字、电子邮件地址、日期时间，此外还有一个标签信息，并且可以使用GNU Privacy Guard (GPG) 签名并验证。通常会建议创建附注标签，这样你可以拥有以上所有的信息。但是如果你只是想用一个临时的标签， 或者因为某些原因不想要保存这些信息，那么也可以用轻量标签。
+
+---
+## 轻量标签
+轻量标签本质上是将提交校验和存储到一个文件中——没有保存任何其他信息。  
+创建轻量标签只需要提供标签名(其实也不可以使用`-a`等选项)：
+```
+$ git tag v0.8
+
+$ git tag
+v0.8
+
+$ git show v0.8
+commit 1b9ed980491f1b6c5b9c9e38025ea8ff3be302ce (HEAD -> dev, tag: v0.8, origin/dev)
+Author: Lucca9102 <luccachina@163.com>
+Date:   Fri Feb 12 20:50:29 2021 +0800
+
+    probably finished learning rebase...
+
+# 下面还会显示这次提交时做出的修改，不贴了
+```
+可以看到，使用`show`命令时，不会出现额外的标签信息，只会显示提交信息。标签默认会创建在最新的一次提交上。
+
+---
+## 附注标签
+创建附注标签只需使用`git tag -a <tag> -m "<message>"`：
+```
+$ git tag -a v0.8 -m "finish learning chapter branch"
+
+$ git show v0.8
+tag v0.8  -> in yellow :-)
+Tagger: Lucca9102 <luccachina@163.com>
+Date:   Fri Feb 12 22:03:55 2021 +0800
+
+finish learning chapter branch
+
+commit 1b9ed980491f1b6c5b9c9e38025ea8ff3be302ce (HEAD -> dev, tag: v0.8, origin/dev)
+Author: Lucca9102 <luccachina@163.com>
+Date:   Fri Feb 12 20:50:29 2021 +0800
+
+    probably finished learning rebase...
+
+# 下面也会显示这次提交时做出的修改，不贴了
+```
+这时查看标签信息会出现打标签者的信息、打标签的日期、附注信息，然后显示具体的提交信息。  
+如果创建时只使用`-a`，则会弹出文件提示编辑tag描述；编辑，保存并关闭文件后会生成标签（如果描述为空则会创建失败）。
+
+---
+## 后期打标签
+也可以对过去的提交打标签。先在提交历史里面找一个喜欢的commit。  
+这里我选的是：
+```
+3fba2fb Made lots of changes.
+```
+现在我给它打上标签`v0.5`：
+```
+$ git tag -a v0.5 -m "..." 3fba2fb
+```
+也就是在之前命令的末尾加上版本号即可。  
+
+---
+## 共享标签
+默认情况下，push时不会传送标签到远程仓库服务器上。在创建完标签后，必须显式地推送标签到共享服务器上。这个过程就像共享远程分支一样——可以运行`git push origin <tagname>`；如果想要一次性推送很多标签，也可以使用`git push origin --tags`，这会把所有不再远程仓库服务器上的标签全部传送到那里。  
+把标签推送到远程后，当别人从远程仓库克隆或拉取时，他们也能得到标签。  
+提醒一下，`--tags`选项不会区分轻量标签或附注标签，而会把所有标签一起推送。并没有简单的选项能够只推送一种标签。
+
+---
+## 删除标签
+1. 删除本地标签
+   ```
+   $ git tag -d v0.8
+   Deleted tag 'v0.8' (was bd51835)
+   ```
+   上述命令并不会删除远程标签
+
+2. 删除远程标签
+   1. `git push <remote> :refs/tags/<tagname>`
+      这个操作的含义是，将冒号前面的空值推送到远程签名，从而高效地删除它
+      ```
+      $ git push origin :refs/tags/v0.8
+      To github.com:Lucca9102/Learning-Git.git
+      - [deleted]         v0.8
+      ```
+      ! 不要手贱尝试在冒号前后加奇怪的东西。在冒号前加其他名字并不能代替远程标签名；比如`git push <remote> test:refs/tags/<tagname>`，如果本地有`test`分支的话还会在远程建立一个对应`test`的，名叫`refs/tags/<tagname>`的奇怪分支...
+   2. `git push <remote> --delete <tagname>`
+      字面意思，删除标签
+      ```
+      $ git push origin --delete v0.75
+      To github.com:Lucca9102/Learning-Git.git
+       - [deleted]         v0.75
+      ```
+
+---
+## 检出标签
+如果像要查看某个标签所指向的文本文件，可以使用`git checkout`命令。这会是仓库处于“分离指针头（detached HEAD）”状态。这个状态有些不好的副作用：  
+在这种状态下，如果做了某些更改然后提交它们，标签不会发生任何变化，但这次新提交将不属于任何分支，并且将无法访问，除非通过确切的提交哈希才能访问。  
+因此，如果要做出更改，比如要修复旧版本中的错误，那么通常需要创建一个新分支，并在这个分支上进行改动。(详见<u>[Git - 打标签](https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E6%89%93%E6%A0%87%E7%AD%BE))</u>
