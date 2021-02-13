@@ -1,5 +1,17 @@
 *为了方便回顾，有些指令在多个部分出现*
 
+---
+# 目录
+- [目录](#目录)
+- [指令总结:](#指令总结)
+  - [系统指令](#系统指令)
+  - [建立仓库和提交](#建立仓库和提交)
+  - [撤销更改](#撤销更改)
+  - [删除文件](#删除文件)
+  - [远程仓库](#远程仓库)
+  - [分支管理](#分支管理)
+  - [打标签](#打标签)
+
 # 指令总结:
 ## 系统指令
 `$` <kbd>`mkdir dir`</kbd>: 创建空目录  
@@ -10,10 +22,21 @@
 
 `$` <kbd>`cat [file]`</kbd>: 查看文件内容  
 `$` <kbd>`rm [file]`</kbd>: 删除文件
+`$` <kbd>`bash *.sh`</kbd>: 运行shell脚本（我也不太了解，只是自动push或pull时用到，所以没有深入了解）
 
 ---
 ## 建立仓库和提交
 `$` <kbd>`git init`</kbd>: 把这个目录编程Git可以管理的仓库  
+`$` <kbd>`git config`</kbd>: 配置Git
+  - `--global`: 全局配置
+  - `user.`: 用户相关设置
+    - `name <username>`: 配置用户名
+    - `email <emailaddress>`: 配置电子邮件地址
+  - `color.ui`: 配置部分命令的输出是否有颜色
+  - `alias.`: 配置别名  
+
+\* 这些配置都可以在仓库目录下的`.git/config`或用户主目录下的`.gitconfig`找到
+
 `$` <kbd>`git add`</kbd>: 把文件添加到仓库  
 `$` <kbd>`git commit`</kbd>：提交修改(创建文件快照)  
   - `-m  "[descriptive message]"`: 把文件提交到仓库
@@ -50,6 +73,9 @@
 ---
 ## 删除文件
 `$` <kbd>`git rm [file]`</kbd>: 在版本库和文件资源管理器中同时删除文件(在Win10系统下文件不会进入回收站)  
+`$` <kbd>`git rm`</kbd>: 删除
+  - `--cached`: 只删除版本库里的文件（如果不加会同时删除工作区的文件）
+  - `-r <folder-path>`: 删除文件夹
 
 ---
 ## 远程仓库
@@ -59,11 +85,13 @@
 
 `$` <kbd>`git remote`</kbd>: 查看远程仓库信息  
   - `-v`: 查看详细信息  
-`$` <kbd>`git remote add <shortname> <url>`</kbd>: 添加名为`<shortname>`，地址为`<url`>的远程仓库(因为笔记来源不同，所以表述可能有所不同，如上面的`<shortname>`和下面的`[alias]`其实是同样的)
-  - eg: `$ git remote add origin git@github.com:lucca9102/Learning-Git` 
+  - `add <shortname> <url>`: 添加名为`<shortname>`，地址为`<url`>的远程仓库(因为笔记来源不同，所以表述可能有所不同，如上面的`<shortname>`和下面的`[alias]`其实是同样的)
+    - eg: `$ git remote add origin git@github.com:lucca9102/Learning-Git`
+  - `rm <remote>`: 移除远程仓库（只是在本地删除）
+  - `set-url --add <remote>`: 给远程库添加一个url
  
 `$` <kbd>`git push <remote>`</kbd>: 把本地的推送到远程仓库  
-  - `-u`: (首次推送时，放在push后)把本地分支与远程分支关联起来，并推送本地分支到远程仓库(有这个作用，知道这个就够用了，但是具体作用建议查表)  
+  - `-u`: (首次推送时，放在push后)把本地分支与远程分支关联起来  
   - `<branch>`: 推送分支
   - `--tags`: 推送本地所有标签
   - `:refs/tags/<tagname>`: 删除远程标签  
@@ -140,3 +168,4 @@
   - `-d <tagname>`: 删除标签
 
 `$` <kbd>`git show <tagname>`</kbd>: 查看tag信息
+  - `-v`: 展示详细信息
